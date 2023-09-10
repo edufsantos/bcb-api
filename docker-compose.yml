@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  api:
+    image: node:18
+    command: yarn start:dev
+    env_file:
+      - .env
+    expose: 
+      - "5003"
+    ports:
+      - "5003:5003"
+    depends_on:
+      - postgres
+    volumes:
+      - ./:/app:cached
+      - ./bcb:/usr/src/app 
+      - /usr/src/app/node_modules
+    working_dir: /app
+
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: bcb-db 
+    ports:
+      - "5432:5432"
+    volumes:
+      - bcb-postgres:/var/lib/postgresql/data
+
+volumes:
+  bcb-postgres:
+  

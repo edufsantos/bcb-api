@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  PRE
+  POS
+}
+
+model User {
+  id                 String    @id @default(uuid()) @db.Uuid
+  name               String
+  password           String?
+  email              String    @unique
+  email_verified     Boolean   @default(false)
+  email_verify_token String?
+  phoneNumber        String
+  cpf                String    @unique
+  cnpj               String
+  companyName        String
+  customerId         String?   @db.Uuid
+  customer           Customer?
+  profile            Profile[]
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+
+  @@unique([email, id, cpf], name: "registration_identifier")
+}
+
+model Profile {
+  id          String   @id @default(uuid()) @db.Uuid
+  users       User[]
+  label       String?  @db.VarChar(1000)
+  permissions Json
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Customer {
+  id              String       @id @default(uuid()) @db.Uuid
+  userId          String       @unique @db.Uuid
+  user            User         @relation(fields: [userId], references: [id])
+  active          Boolean      @default(false)
+  planPayment     Plan
+  balanceCredits  Int? // Creditos para pré pago
+  consumptionPlan Int? // Consumo do Pos 
+  messagesSent    Message[]
+  posPaidPlanId   String?      @unique @db.Uuid
+  posPaidPlan     PosPaidPlan? @relation(fields: [posPaidPlanId], references: [id])
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+}
+
+model PosPaidPlan {
+  id             String     @id @default(uuid()) @db.Uuid
+  customer       Customer[]
+  title          String?
+  description    String?
+  price          String?
+  balanceCredits Int?
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
+}
+
+model Message {
+  id          String   @id @default(uuid()) @db.Uuid
+  phoneNumber String
+  isWhatsApp  Boolean
+  text        String
+  customerId  String   @unique @db.Uuid
+  customer    Customer @relation(fields: [customerId], references: [id])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
