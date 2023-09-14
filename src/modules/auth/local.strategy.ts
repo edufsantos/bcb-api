@@ -12,11 +12,38 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(email: string, password: string): Promise<any> {
-    const user = await this.authService.validateUser(email, password);
+    const user = await this.authService.validateUser(email, password, 'user');
+
     if (!user) {
       throw new UnauthorizedException();
     }
-    if (!user.email_verified) {
+    if (!user.emailVerified) {
+      throw new UnauthorizedException(AuthErrors.EmailNotVerifyed);
+    }
+    return new UserSerializer(user);
+  }
+}
+
+@Injectable()
+export class LocalCustomerStrategy extends PassportStrategy(
+  Strategy,
+  'local-customer',
+) {
+  constructor(private authService: AuthService) {
+    super({ usernameField: 'email' });
+  }
+
+  async validate(email: string, password: string): Promise<any> {
+    const user = await this.authService.validateUser(
+      email,
+      password,
+      'customer',
+    );
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    if (!user.emailVerified) {
       throw new UnauthorizedException(AuthErrors.EmailNotVerifyed);
     }
     return new UserSerializer(user);

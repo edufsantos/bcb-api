@@ -1,6 +1,6 @@
 export const AuthErrors = {
-  EmailNotFound: 'EmailNotFound',
+  AccountNotFound: 'AccountNotFound',
+  YourAccountIsNotActive: 'YourAccountIsNotActive',
   EmailNotVerifyed: 'EmailNotVerifyed',
-  InvalidPassword: 'InvalidPassword',
   InvalidToken: 'InvalidToken',
 };

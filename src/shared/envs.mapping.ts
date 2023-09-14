@@ -5,8 +5,4 @@ export type Envs = {
   CLIENT_URL: string;
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
-  SMTP_HOST: string;
-  SMTP_USER: string;
-  SMTP_PASS: string;
-  SMTP_DEFAULT_FROM: string;
 };

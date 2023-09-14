@@ -16,47 +16,40 @@ enum Plan {
 }
 
 model User {
-  id                 String    @id @default(uuid()) @db.Uuid
-  name               String
-  password           String?
-  email              String    @unique
-  email_verified     Boolean   @default(false)
-  email_verify_token String?
-  phoneNumber        String
-  cpf                String    @unique
-  cnpj               String
-  companyName        String
-  customerId         String?   @db.Uuid
-  customer           Customer?
-  profile            Profile[]
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String
+  email         String   @unique
+  emailVerified Boolean? @default(false)
+  phoneNumber   String
+  cpf           String   @unique
+  password      String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
   @@unique([email, id, cpf], name: "registration_identifier")
 }
 
-model Profile {
-  id          String   @id @default(uuid()) @db.Uuid
-  users       User[]
-  label       String?  @db.VarChar(1000)
-  permissions Json
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-}
-
 model Customer {
   id              String       @id @default(uuid()) @db.Uuid
-  userId          String       @unique @db.Uuid
-  user            User         @relation(fields: [userId], references: [id])
-  active          Boolean      @default(false)
-  planPayment     Plan
-  balanceCredits  Int? // Creditos para pré pago
-  consumptionPlan Int? // Consumo do Pos 
+  name            String
+  email           String       @unique
+  emailVerified   Boolean?     @default(false)
+  phoneNumber     String
+  cpf             String       @unique
+  cnpj            String
+  companyName     String
+  password        String?
+  active          Boolean?     @default(false)
+  planPayment     Plan         @default(POS)
+  balanceCredits  Int?         @default(0) // Creditos para pré pago
+  consumptionPlan Int?         @default(0) // Consumo do Pos 
   messagesSent    Message[]
-  posPaidPlanId   String?      @unique @db.Uuid
+  posPaidPlanId   String?      @db.Uuid
   posPaidPlan     PosPaidPlan? @relation(fields: [posPaidPlanId], references: [id])
   created_at      DateTime     @default(now())
   updated_at      DateTime     @updatedAt
+
+  @@unique([id, email, cpf], name: "customer_identifier")
 }
 
 model PosPaidPlan {
@@ -64,8 +57,10 @@ model PosPaidPlan {
   customer       Customer[]
   title          String?
   description    String?
-  price          String?
+  price          Float?
   balanceCredits Int?
+  active         Boolean?   @default(false)
+  isMostPopular  Boolean?   @default(false)
   created_at     DateTime   @default(now())
   updated_at     DateTime   @updatedAt
 }
@@ -75,7 +70,7 @@ model Message {
   phoneNumber String
   isWhatsApp  Boolean
   text        String
-  customerId  String   @unique @db.Uuid
+  customerId  String   @db.Uuid
   customer    Customer @relation(fields: [customerId], references: [id])
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt

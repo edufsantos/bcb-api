@@ -1,5 +1,31 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 
+@Exclude()
+class CustomerData {
+  constructor(partial: Partial<CustomerData>) {
+    Object.assign(this, partial);
+  }
+  @Expose()
+  active: boolean;
+
+  @Expose()
+  balanceCredits: string;
+
+  @Expose()
+  cnpj: string;
+
+  @Expose()
+  companyName: string;
+
+  @Expose()
+  consumptionPlan: string;
+
+  @Expose()
+  planPayment: string;
+
+  @Expose()
+  posPaidPlanId: string;
+}
 @Exclude()
 export class UserSerializer {
   constructor(partial: Partial<UserSerializer>) {
@@ -14,6 +40,14 @@ export class UserSerializer {
 
   @Expose()
   email: string;
+
+  @Expose()
+  @Transform(({ obj }) => !!obj.planPayment)
+  isCustomer: boolean;
+
+  @Expose()
+  @Transform(({ obj }) => new CustomerData(obj))
+  customerData: CustomerData;
 
   @Expose()
   created_at: Date;

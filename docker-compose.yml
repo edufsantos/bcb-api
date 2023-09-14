@@ -14,7 +14,7 @@ services:
       - postgres
     volumes:
       - ./:/app:cached
-      - ./bcb:/usr/src/app 
+      - ./:/usr/src/app
       - /usr/src/app/node_modules
     working_dir: /app
 

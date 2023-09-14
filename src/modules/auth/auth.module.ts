@@ -6,7 +6,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtConfig } from './jwt/jwt.config';
 import { JwtStrategy } from './jwt/jwt.strategy';
-import { LocalStrategy } from './local.strategy';
+import { LocalCustomerStrategy, LocalStrategy } from './local.strategy';
 
 @Module({
   imports: [
@@ -15,7 +15,13 @@ import { LocalStrategy } from './local.strategy';
       useClass: JwtConfig,
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, PrismaService],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    LocalCustomerStrategy,
+    JwtStrategy,
+    PrismaService,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

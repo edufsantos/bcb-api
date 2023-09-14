@@ -1,9 +1,16 @@
-import { IsEmail, IsNotEmpty, MaxLength, MinLength } from 'class-validator';
 import { Exclude, Expose } from 'class-transformer';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { IsEqualTo } from 'src/shared/decorators/class-validator/IsEqualTo';
+import { CreateAccountDto } from './create-account.dto';
 
 @Exclude()
-export class CreateAccountDto {
+export class CreateCustomerAccountDto {
   @Expose()
   @IsNotEmpty()
   @IsEmail()
@@ -31,4 +38,19 @@ export class CreateAccountDto {
   @IsNotEmpty()
   @IsEqualTo<CreateAccountDto>('password')
   password_confirmation: string;
+
+  @Expose()
+  @IsNotEmpty()
+  cnpj: string;
+
+  @Expose()
+  @IsNotEmpty()
+  companyName: string;
+
+  @Expose()
+  active?: boolean;
+
+  @Expose()
+  @IsOptional()
+  planId?: string;
 }
